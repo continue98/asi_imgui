@@ -6,15 +6,20 @@ WNDPROC m_pWindowProc = nullptr;
 _EndScene oEndScene = nullptr;
 _Reset oReset = nullptr;
 
-auto asi_tread( HINSTANCE DLL ) -> void
+auto asi_thread( HINSTANCE DLL ) -> void
 {
-	while( !GetModuleHandleA( "samp.dll" ) || *( DWORD* ) SAMP_GAMESTATE != 9 )
+	while( !GetModuleHandleA( "samp.dll" ) ||
+		*( DWORD* ) SAMP_GAMESTATE != 9)
 		Sleep( 100 );
 
 	g_dwSAMP = ( DWORD ) GetModuleHandleA( "samp.dll" );
 	g_stInput = ( stInputInfo* ) ( g_dwSAMP + SAMP_CHAT_INPUT );
-
-	m_pGameWindow = FindWindowA( 0 , "GTA:SA:MP" );
+	
+	while( !m_pGameWindow )
+	{
+		m_pGameWindow = FindWindow( nullptr , "GTA:SA:MP" );
+		Sleep( 50 );
+	}
 	m_pWindowProc = ( WNDPROC ) SetWindowLongPtr( m_pGameWindow , GWL_WNDPROC , ( LONG_PTR ) WndProcHandler );
 
 	void** vTableDevice = *( void*** ) ( *( DWORD* ) SAMP_DEVICE );
@@ -35,7 +40,9 @@ auto asi_tread( HINSTANCE DLL ) -> void
 auto __stdcall DllMain( HINSTANCE hinst , DWORD reason , LPVOID reserved ) -> int
 {
 	if( reason == DLL_PROCESS_ATTACH )
-		CreateThread( nullptr , 0 , ( LPTHREAD_START_ROUTINE ) asi_tread , hinst , 0 , nullptr );
+		CreateThread( nullptr , 0 , ( LPTHREAD_START_ROUTINE ) asi_thread , hinst , 0 , nullptr );
+	if (reason == DLL_PROCESS_DETACH )
+		FreeLibraryAndExitThread( static_cast< HMODULE >( hinst ) , EXIT_SUCCESS );
 
 	return TRUE;
 }

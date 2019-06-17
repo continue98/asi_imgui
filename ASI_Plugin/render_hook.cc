@@ -4,11 +4,17 @@ bool Menu = false;
 
 auto __stdcall hooked_EndScene( IDirect3DDevice9* pDevice ) -> HRESULT
 {
-	if( Menu )
+	static bool im_init = false;
+	if( !im_init )
 	{
 		ImGui::CreateContext( );
 		ImGui_ImplWin32_Init( m_pGameWindow );
 		ImGui_ImplDX9_Init( pDevice );
+		im_init = true;
+	}
+	if( Menu )
+	{
+		ImGui::CreateContext( );
 		ImGui_ImplDX9_NewFrame( );
 		ImGui_ImplWin32_NewFrame( );
 		ImGui::NewFrame( );
@@ -43,7 +49,7 @@ auto __stdcall WndProcHandler( HWND hwd , UINT msg , WPARAM wParam , LPARAM lPar
 		if( wParam == VK_ESCAPE && Menu )
 		{
 			Menu = false;
-			return TRUE;
+			return true;
 		}
 	}
 
