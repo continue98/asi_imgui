@@ -32,6 +32,11 @@ auto asi_thread( HINSTANCE DLL ) -> void
 		Sleep( 150 );
 
 	SetWindowLongPtr( m_pGameWindow , GWLP_WNDPROC , LONG_PTR( m_pWindowProc ) );
+
+	ImGui_ImplDX9_Shutdown( );
+	ImGui_ImplWin32_Shutdown( );
+	ImGui::DestroyContext( );
+
 	vmtDevice->UnhookAll( );
 
 	FreeLibraryAndExitThread( static_cast< HMODULE >( DLL ) , EXIT_SUCCESS );

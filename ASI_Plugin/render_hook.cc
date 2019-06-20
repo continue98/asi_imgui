@@ -18,9 +18,7 @@ auto __stdcall hooked_EndScene( IDirect3DDevice9* pDevice ) -> HRESULT
 		ImGui_ImplDX9_NewFrame( );
 		ImGui_ImplWin32_NewFrame( );
 		ImGui::NewFrame( );
-
-		ImGui::ShowDemoWindow( &Menu );
-
+		
 		ImGui::EndFrame( );
 		ImGui::Render( );
 		ImGui_ImplDX9_RenderDrawData( ImGui::GetDrawData( ) );
